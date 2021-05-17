@@ -2,7 +2,9 @@ import os
 from dotenv import load_dotenv
 from datetime import date
 
-from app.weather_email import get_hourly_forecasts, set_geography
+from app import APP_ENV
+from app.weather_code import getting_daily_high, set_geography
+from app.stock_code import last_close, set_stock_data
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
@@ -44,11 +46,20 @@ if __name__ == "__main__":
     print("COUNTRY:", user_country)
     print("ZIP CODE:", user_zip)
 
+    user_symbol, user_shares= set_stock_data()
+    print("SYMBOL:", user_symbol)
+    print("SHARES:", user_shares)
+
     # FETCH DATA
 
-    result = get_hourly_forecasts(country_code=user_country, zip_code=user_zip)
+    result = getting_daily_high(country_code=user_country, zip_code=user_zip)
     if not result:
         print("INVALID GEOGRAPHY. PLEASE CHECK YOUR INPUTS AND TRY AGAIN!")
+        exit()
+
+    result1 = last_close(symbol=user_symbol)
+    if not result1:
+        print("INVALID SYMBOL, PLEASE TRY AGAIN!")
         exit()
 
     # DISPLAY OUTPUTS
@@ -61,11 +72,11 @@ if __name__ == "__main__":
     html += "<h4>Today's Date</h4>"
     html += f"<p>{todays_date}</p>"
 
-    html += f"<h4>Weather Forecast for {result['city_name']}</h4>"
+    html += f"<p>The high in {result['city_name']} today will be {result['daily_high']}. </p>"
+    html += f"<p>The latest closing price for {user_symbol} today will be {result1['latest_close']}. </p>"
+    html += "<p>For more information on both the weather and the stocks, please run your Flask App. </p>"
+    html += "<p>Have a terrific day! </p>"
     html += "<ul>"
-    for forecast in result["hourly_forecasts"]:
-        html += f"<li>{forecast['timestamp']} | {forecast['temp']} | {forecast['conditions'].upper()}</li>"
-    html += "</ul>"
 
-    send_email(subject="[Daily Briefing] My Morning Report", html=html)
+    send_email(subject="[Daily Email] Today's Crucial Information", html=html)
     

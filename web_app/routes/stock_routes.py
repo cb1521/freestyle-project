@@ -1,31 +1,49 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, flash
 
-from app.stock_email import get_stock_data
+from app.stock_code import stock_growth, stock_time, stock_time
 
-weather_routes = Blueprint("stock_routes", __name__)
+stock_routes = Blueprint("stock_routes", __name__)
 
 @stock_routes.route("/stock/summary.json")
-def weather_forecast_api():
-    print("WEATHER FORECAST (API)...")
+def stock_summary_api():
+    print("STOCK SUMMARY (API)...")
     print("URL PARAMS:", dict(request.args))
 
-    country_code = request.args.get("country_code") or "US"
-    zip_code = request.args.get("zip_code") or "20057"
+    symbol = request.args.get("ticker_symbol") or "MSFT"
+    shares = request.args.get("stock_shares") or "1"
 
-    results = get_hourly_forecasts(country_code=country_code, zip_code=zip_code)
+    results = stock_growth(symbol= symbol, shares= shares)
     if results:
         return jsonify(results)
     else:
-        return jsonify({"message":"Invalid Geography. Please try again."}), 404
+        return jsonify({"message":"Invalid Values. Please try again."}), 404
 
-@weather_routes.route("/weather/form")
-def weather_form():
-    print("WEATHER FORM...")
-    return render_template("weather_form.html")
+def stock_trends_api():
+    print("STOCK TRENDS (API)...")
+    print("URL PARAMS:", dict(request.args))
 
-@weather_routes.route("/weather/forecast", methods=["GET", "POST"])
-def weather_forecast():
-    print("WEATHER FORECAST...")
+    symbol = request.args.get("ticker_symbol") or "MSFT"
+    shares = request.args.get("stock_shares") or "1"
+
+    results = stock_time(symbol= symbol, shares= shares)
+    if results:
+        return jsonify(results)
+    else:
+        return jsonify({"message":"Invalid Values. Please try again."}), 404
+
+@stock_routes.route("/stock/form")
+def stock_form():
+    print("STOCK FORM...")
+    return render_template("stock_form.html")
+
+@stock_routes.route("/stock/trends/form")
+def stock_trends_form():
+    print("STOCK TRENDS FORM...")
+    return render_template("stock_trends_form.html")
+
+@stock_routes.route("/stock/summary", methods=["GET", "POST"])
+def stock_summary():
+    print("STOCK SUMMARY...")
 
     if request.method == "GET":
         print("URL PARAMS:", dict(request.args))
@@ -34,13 +52,35 @@ def weather_forecast():
         print("FORM DATA:", dict(request.form))
         request_data = dict(request.form)
 
-    country_code = request_data.get("country_code") or "US"
-    zip_code = request_data.get("zip_code") or "20057"
+    symbol = request_data.get("ticker_symbol") or "MSFT"
+    shares = request_data.get("stock_shares") or "1"
 
-    results = get_hourly_forecasts(country_code=country_code, zip_code=zip_code)
+    results = stock_growth(symbol=symbol, shares=shares)
     if results:
-        flash(f"Weather Forecast Generated Successfully!", "success")
-        return render_template("weather_forecast.html", country_code=country_code, zip_code=zip_code, results=results)
+        flash(f"Stock Summary Generated Successfully!", "success")
+        return render_template("stock_summary.html", symbol=symbol, shares=shares, results=results)
     else:
-        flash(f"Geography Error. Please try again!", "danger")
-        return redirect("/weather/form")
+        flash(f"Symbol or Share Error. Please try again!", "danger")
+        return redirect("/stock/form")
+
+@stock_routes.route("/stock/trends", methods=["GET", "POST"])
+def stock_trends():
+    print("CLOSING PRICE OVER THE PAST MONTH...")
+
+    if request.method == "GET":
+        print("URL PARAMS:", dict(request.args))
+        request_data = dict(request.args)
+    elif request.method == "POST": # the form will send a POST
+        print("FORM DATA:", dict(request.form))
+        request_data = dict(request.form)
+
+    symbol = request_data.get("ticker_symbol") or "MSFT"
+    shares = request_data.get("stock_shares") or "1"
+
+    results = stock_time(symbol=symbol, shares=shares)
+    if results:
+        flash(f"Stock Summary Generated Successfully!", "success")
+        return render_template("stock_trends.html", symbol=symbol, shares=shares, results=results)
+    else:
+        flash(f"Symbol or Share Error. Please try again!", "danger")
+        return redirect("/stock/trends/form")

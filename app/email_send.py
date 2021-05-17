@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from datetime import date
 
+from app import APP_ENV
 from app.weather_email import get_hourly_forecasts, set_geography
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail

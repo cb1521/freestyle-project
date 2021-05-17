@@ -4,6 +4,7 @@ from pprint import pprint
 from dateutil.parser import parse as parse_datetime
 
 import requests
+from app import APP_ENV
 from dotenv import load_dotenv
 from pgeocode import Nominatim as Geocoder
 from pandas import isnull

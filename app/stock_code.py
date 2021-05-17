@@ -98,7 +98,7 @@ def stock_trends(symbol, shares):
     #print(request_url)
     response= requests.get(request_url)
     if "https://www.alphavantage.co/documentation/" in str(response.text): #data validation method for invalid
-        print("It seems as if you input an invalid stock symbol! This symbol will not generate any data. The rest of the symbols will still be generated.")
+        print("It seems as if you input an invalid stock symbol! This symbol will not generate any data.")
         quit()
     elif "https://www.alphavantage.co/premium/" in str(response.text): #data validation for exceeding the minute or daily limits
         print("You have either exceeded your calls per minute or your calls per day. Try again in a minute, or come back tomorrow!")

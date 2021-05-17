@@ -5,6 +5,7 @@ from app.weather_code import get_hourly_forecasts, get_weekly_forecasts, DEGREE_
 
 CI_ENV = os.getenv("CI") == "true"
 
+
 @pytest.mark.skipif(CI_ENV==True, reason="to avoid issuing HTTP requests on the CI server")
 def test_hourly_forecasts():
     # with valid geography, returns the city name and forecast info:

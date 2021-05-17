@@ -107,7 +107,7 @@ def get_weekly_forecasts(country_code, zip_code):
     for period in parsed_forecast_response["properties"]["periods"]:
         if period["isDaytime"] == True:
             weekly_forecasts.append({
-                "timestamp": format_hour(period["startTime"]),
+                "day_of_week": period["name"],
                 "temp": format_temp(period["temperature"], period["temperatureUnit"]),
                 "conditions": period["shortForecast"],
                 "image_url": period["icon"]
@@ -226,4 +226,4 @@ if __name__ == "__main__":
     print("-----------------")
 
     for forecast in result2["weekly_forecasts"]:
-        print(forecast["timestamp"], "|", forecast["temp"], "|", forecast["conditions"])
+        print(forecast["day_of_week"], "|", forecast["temp"], "|", forecast["conditions"])

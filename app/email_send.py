@@ -3,8 +3,8 @@ from dotenv import load_dotenv
 from datetime import date
 
 from app import APP_ENV
-from app.weather_code import getting_daily_high, set_geography
-from app.stock_code import last_close, set_stock_data
+from app.weather_service import getting_daily_high, set_geography
+from app.stock_service import last_close, set_stock_data
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 

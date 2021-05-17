@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, flash
 
-from app.stock_code import stock_growth, stock_time, stock_time
+from app.stock_service import stock_growth, stock_time, stock_time
 
 stock_routes = Blueprint("stock_routes", __name__)
 

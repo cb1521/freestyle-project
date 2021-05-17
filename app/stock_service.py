@@ -45,10 +45,18 @@ def set_stock_data():
     try:
         float(symbol) #making sure that the symbol is not a number
         print("Looks like you entered a number! Please try again.")
+        quit()
     except ValueError:
-        pass #letting everything that is not a number go through
+        pass #letting everything that is not a number for the symbol go through, and letting everything that is a number for the shares go through
     if len(symbol)<1 or len(symbol)>5: #validating appropriate character length
         print("...You must enter a stock identifier that has between 1 to 5 characters. Try again!")
+        quit()
+    try:
+        int(shares) #making sure the share number is an integer
+        pass
+    except ValueError:
+        print("Please enter an integer for your stock shares!")
+        quit()
     return symbol, shares
 
 def last_close(symbol):
@@ -91,8 +99,9 @@ def stock_growth(symbol, shares):
     previous_investor_value= previous_close*int(shares)
     stock_data=[]
     stock_data.append({
-        "current_investor_value": to_usd(current_investor_value),
-        "previous_investor_value": to_usd(previous_investor_value),
+        "latest_close": latest_close,
+        "current_investor_value": float(current_investor_value),
+        "previous_investor_value": float(previous_investor_value),
         "change_in_value": to_usd(current_investor_value - previous_investor_value)
     })
     return{"stock_data": stock_data}
@@ -128,17 +137,17 @@ if __name__ == "__main__":
 
     result= last_close(symbol= user_symbol)
     if not result:
-        print("INVALID SYMBOL, PLEASE TRY AGAIN!")
+        print("INVALID SYMBOL OR SHARES, PLEASE TRY AGAIN!")
         exit()
 
     result1 = stock_growth(symbol= user_symbol, shares= user_shares)
     if not result1:
-        print("INVALID SYMBOL, PLEASE TRY AGAIN!")
+        print("INVALID SYMBOL OR SHARES, PLEASE TRY AGAIN!")
         exit()
     
     result2 = stock_time(symbol= user_symbol, shares= user_shares)
     if not result2:
-        print("INVALID SYMBOL, PLEASE TRY AGAIN!")
+        print("INVALID SYMBOL OR SHARES, PLEASE TRY AGAIN!")
         exit()
 
     # DISPLAY OUTPUTS
@@ -147,7 +156,8 @@ if __name__ == "__main__":
     print("-----------------")
 
     print("-----------------")
-    print(f"YOUR INVESTMENT IN {user_symbol} STOCK HAS CHANGED BY {result1['investment_trends']['change_in_value']}")
+    for y in result1["stock_data"]:
+        print(f"YOUR INVESTMENT IN {user_symbol} STOCK HAS CHANGED BY {y['change_in_value']}")
     print("-----------------")
     
     print("-----------------")

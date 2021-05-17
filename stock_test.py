@@ -16,6 +16,7 @@ def test_stock_growth():
     assert sorted(list(stock_data.keys())) == ["change_in_value", "current_investor_value", "latest_close", "previous_investor_value"]
     assert stock_data['current_investor_value'] == 4*stock_data['latest_close']
 
+@pytest.mark.skipif(CI_ENV==True, reason="to avoid issuing HTTP requests on the CI server")
 def test_stock_time():
     results = stock_time(symbol= "MSFT", shares= "4")
     assert len(results['investment_trends']) == 20

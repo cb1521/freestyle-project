@@ -27,7 +27,7 @@ def to_usd(my_price):
 
 def format_date(dt_str):
     """
-    Displays a datetime-looking string as the human friendly hour like "4pm" or "16:00"
+    Displays a datetime-looking string as the human friendly day.
 
     Params : dt_str (str) a datetime like "2021-03-29T21:00:00-04:00"
 
@@ -40,6 +40,9 @@ def format_date(dt_str):
 #symbol_list= [] #empty list to store all of the stock tickers into for the loop
 #validating data
 def set_stock_data():
+    """
+    Sets the stock data to use. Stock ticker and Number of shares.
+    """
     symbol = TICKER_SYMBOL
     shares = STOCK_SHARES
     try:
@@ -60,6 +63,10 @@ def set_stock_data():
     return symbol, shares
 
 def last_close(symbol):
+
+    """
+    Returns the last closing price when you input the stock symbol
+    """
     api_key= os.environ.get("ALPHAVANTAGE_API_KEY") #using the .env variable
     request_url= f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={api_key}" #getting the appropriate webpage
     #print(request_url)
@@ -78,6 +85,10 @@ def last_close(symbol):
     return {"latest_close": latest_close}
 
 def stock_growth(symbol, shares):
+
+    """
+    Shows how your investment has changed since yesterday, given a particular stock and a certain number of shares.
+    """
     api_key= os.environ.get("ALPHAVANTAGE_API_KEY") #using the .env variable
     request_url= f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={api_key}" #getting the appropriate webpage
     #print(request_url)
@@ -93,20 +104,23 @@ def stock_growth(symbol, shares):
     dates=list(tsd.keys())
     latest_day= dates[0]
     previous_day= dates[1]
-    latest_close= float(tsd[latest_day]["4. close"])
+    latest_close= float(tsd[latest_day]["4. close"]) #getting various metrics to implement in conjunction with each other
     previous_close= float(tsd[previous_day]["4. close"])
     current_investor_value= latest_close*int(shares)
     previous_investor_value= previous_close*int(shares)
     stock_data=[]
     stock_data.append({
-        "latest_close": latest_close,
-        "current_investor_value": float(current_investor_value),
-        "previous_investor_value": float(previous_investor_value),
+        "latest_close": to_usd(latest_close),
+        "current_investor_value": to_usd(current_investor_value),
+        "previous_investor_value": to_usd(previous_investor_value),
         "change_in_value": to_usd(current_investor_value - previous_investor_value)
     })
     return{"stock_data": stock_data}
 
 def stock_time(symbol, shares):
+    """
+    Shows the past 20 closing prices with their days
+    """
     api_key= os.environ.get("ALPHAVANTAGE_API_KEY") #using the .env variable
     request_url= f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={api_key}" #getting the appropriate webpage
     #print(request_url)
@@ -122,7 +136,7 @@ def stock_time(symbol, shares):
     dates=list(tsd.keys())
     investment_trends= []
     for date in dates [0:20]: #looping through and banking each variable into the lists
-        daily_close=tsd[date]["4. close"]
+        daily_close=tsd[date]["4. close"] #creating a list of dictionaries to analyze recent behavior
         investment_trends.append({
             "date": format_date(date),
             "daily_investment_close": to_usd(float(daily_close)*int(shares))
@@ -135,7 +149,7 @@ if __name__ == "__main__":
     
     # FETCH DATA
 
-    result= last_close(symbol= user_symbol)
+    result= last_close(symbol= user_symbol) #validations
     if not result:
         print("INVALID SYMBOL OR SHARES, PLEASE TRY AGAIN!")
         exit()
@@ -151,6 +165,8 @@ if __name__ == "__main__":
         exit()
 
     # DISPLAY OUTPUTS
+
+    #putting it all together
     print("-----------------")
     print(f"THE LAST CLOSING PRICE FOR {user_symbol} STOCK IS {result['latest_close']}")
     print("-----------------")

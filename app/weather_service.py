@@ -21,7 +21,7 @@ def set_geography():
     user_zip = ZIP_CODE
     return user_country, user_zip
 
-def get_hourly_forecasts(country_code, zip_code):
+def get_hourly_forecasts(country_code, zip_code): #for the web app
     """
     Fetches hourly forecast information from the Weather.gov API, for a given country and zip code.
 
@@ -53,9 +53,6 @@ def get_hourly_forecasts(country_code, zip_code):
         return None
     parsed_forecast_response = json.loads(forecast_response.text)
 
-    # consider returning the raw geo and parsed_forecast_response objects,
-    # ... and using a different method to parse them further!
-    # ... but we're doing that here for now as well:
     city_name = f"{geo.place_name}, {geo.state_code}" #> Washington, DC
     hourly_forecasts = []
     for period in parsed_forecast_response["properties"]["periods"][0:24]:
@@ -67,7 +64,7 @@ def get_hourly_forecasts(country_code, zip_code):
     })
     return {"city_name": city_name, "hourly_forecasts": hourly_forecasts}
     
-def get_weekly_forecasts(country_code, zip_code):
+def get_weekly_forecasts(country_code, zip_code): #for the web app examining trends
     """
     Fetches the weekly data from the Weather.gov API, for a given country and zip code.
 
@@ -99,9 +96,6 @@ def get_weekly_forecasts(country_code, zip_code):
         return None
     parsed_forecast_response = json.loads(forecast_response.text)
 
-    # consider returning the raw geo and parsed_forecast_response objects,
-    # ... and using a different method to parse them further!
-    # ... but we're doing that here for now as well:
     city_name = f"{geo.place_name}, {geo.state_code}" #> Washington, DC
     weekly_forecasts = []
     for period in parsed_forecast_response["properties"]["periods"]:
@@ -116,7 +110,7 @@ def get_weekly_forecasts(country_code, zip_code):
             continue
     return {"city_name": city_name, "weekly_forecasts": weekly_forecasts}
 
-def getting_daily_high(country_code, zip_code):
+def getting_daily_high(country_code, zip_code): #just getting the one data point
     """
     Fetches the daily high from the Weather.gov API, for a given country and zip code.
 
@@ -148,9 +142,6 @@ def getting_daily_high(country_code, zip_code):
         return None
     parsed_forecast_response = json.loads(forecast_response.text)
 
-    # consider returning the raw geo and parsed_forecast_response objects,
-    # ... and using a different method to parse them further!
-    # ... but we're doing that here for now as well:
     city_name = f"{geo.place_name}, {geo.state_code}" #> Washington, DC
     for period in parsed_forecast_response["properties"]["periods"][0:2]:
         if period["isDaytime"] == True:
@@ -210,6 +201,8 @@ if __name__ == "__main__":
         exit()
 
     # DISPLAY OUTPUTS
+
+    #putting it all together
     print("-----------------")
     print(f"TODAY'S WEATHER HIGH FOR {result['city_name'].upper()} is {result['daily_high']}")
     print("-----------------")

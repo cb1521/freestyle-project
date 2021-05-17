@@ -4,6 +4,8 @@ from app.stock_service import stock_growth, stock_time, stock_time
 
 stock_routes = Blueprint("stock_routes", __name__)
 
+#building the stock routes
+
 @stock_routes.route("/stock/summary.json")
 def stock_summary_api():
     print("STOCK SUMMARY (API)...")

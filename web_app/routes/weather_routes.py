@@ -4,6 +4,8 @@ from app.weather_service import get_hourly_forecasts, get_weekly_forecasts
 
 weather_routes = Blueprint("weather_routes", __name__)
 
+#building the weather routes
+
 @weather_routes.route("/weather/forecast.json")
 def weather_forecast_api():
     print("WEATHER FORECAST (API)...")

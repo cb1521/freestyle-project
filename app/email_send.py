@@ -52,19 +52,21 @@ if __name__ == "__main__":
 
     # FETCH DATA
 
-    result = getting_daily_high(country_code=user_country, zip_code=user_zip)
+    result = getting_daily_high(country_code=user_country, zip_code=user_zip) #capturing the weather
     if not result:
         print("INVALID GEOGRAPHY. PLEASE CHECK YOUR INPUTS AND TRY AGAIN!")
         exit()
 
-    result1 = last_close(symbol=user_symbol)
+    result1 = last_close(symbol=user_symbol) #capturing the stock
     if not result1:
         print("INVALID SYMBOL, PLEASE TRY AGAIN!")
         exit()
 
     # DISPLAY OUTPUTS
 
-    todays_date = date.today().strftime('%A, %B %d, %Y')
+
+    #sending the email
+    todays_date = date.today().strftime('%A, %B %d, %Y') 
 
     html = ""
     html += f"<h3>Good Morning, {USER_NAME}!</h3>"
@@ -73,8 +75,8 @@ if __name__ == "__main__":
     html += f"<p>{todays_date}</p>"
 
     html += f"<p>The high in {result['city_name']} today will be {result['daily_high']}. </p>"
-    html += f"<p>The latest closing price for {user_symbol} today will be {result1['latest_close']}. </p>"
-    html += "<p>For more information on both the weather and the stocks, please run your Flask App. </p>"
+    html += f"<p>The most recent closing price for {user_symbol} today is {result1['latest_close']}. </p>"
+    html += "<p>For more information on both the weather and the stocks, please visit https://freestyle-app.herokuapp.com/. </p>"
     html += "<p>Have a terrific day! </p>"
     html += "<ul>"
 

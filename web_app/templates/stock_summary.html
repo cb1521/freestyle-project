@@ -11,6 +11,7 @@
     <!-- TODO: consider adding images using the provided icon urls -->
     <ul>
         {% for x in results["stock_data"] %}
+            <p>The value of a single share of {{ symbol }} today is {{ x['latest_close'] }}.</p>
             <p>The value of your shares in {{ symbol }} today is {{ x['current_investor_value'] }}.</p>
             <p>The value of your shares in {{ symbol }} the previous day of trading was {{ x['previous_investor_value'] }}.</p>
             <p>The difference in the value of your shares in {{ symbol }} from the previous day of trading to today is {{ x['change_in_value'] }}.</p>

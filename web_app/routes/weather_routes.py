@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, flash
 
-from app.weather_service import get_hourly_forecasts
+from app.stock_email import get_hourly_forecasts
 
 weather_routes = Blueprint("weather_routes", __name__)
 

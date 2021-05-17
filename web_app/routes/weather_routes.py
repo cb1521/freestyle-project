@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, flash
 
-from app.weather_email import get_hourly_forecasts
+from app.weather_email import get_hourly_forecasts, get_weekly_forecasts
 
 weather_routes = Blueprint("weather_routes", __name__)
 
@@ -23,6 +23,11 @@ def weather_form():
     print("WEATHER FORM...")
     return render_template("weather_form.html")
 
+@weather_routes.route("/weather/trends/form")
+def weather_trends_form():
+    print("WEATHER FORM...")
+    return render_template("weather_trends_form.html")
+
 @weather_routes.route("/weather/forecast", methods=["GET", "POST"])
 def weather_forecast():
     print("WEATHER FORECAST...")
@@ -44,3 +49,25 @@ def weather_forecast():
     else:
         flash(f"Geography Error. Please try again!", "danger")
         return redirect("/weather/form")
+
+@weather_routes.route("/weather/trends", methods=["GET", "POST"])
+def weather_trends():
+    print("WEATHER FOR THE NEXT WEEK...")
+
+    if request.method == "GET":
+        print("URL PARAMS:", dict(request.args))
+        request_data = dict(request.args)
+    elif request.method == "POST": # the form will send a POST
+        print("FORM DATA:", dict(request.form))
+        request_data = dict(request.form)
+
+    country_code = request_data.get("country_code") or "US"
+    zip_code = request_data.get("zip_code") or "20057"
+
+    results = get_weekly_forecasts(country_code=country_code, zip_code=zip_code)
+    if results:
+        flash(f"Weather Forecast Generated Successfully!", "success")
+        return render_template("weather_trends.html", country_code=country_code, zip_code=zip_code, results=results)
+    else:
+        flash(f"Geography Error. Please try again!", "danger")
+        return redirect("/weather/trends/form")

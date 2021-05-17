@@ -66,6 +66,98 @@ def get_hourly_forecasts(country_code, zip_code):
             "image_url": period["icon"]
     })
     return {"city_name": city_name, "hourly_forecasts": hourly_forecasts}
+    
+def get_weekly_forecasts(country_code, zip_code):
+    """
+    Fetches the weekly data from the Weather.gov API, for a given country and zip code.
+
+    Params:
+        country_code (str) the requested country, like "US"
+        zip_code (str) the requested postal code, like "20057"
+
+    Example:
+        result = get_weekly_forecasts(country_code="US", zip_code="20057")
+
+    Returns the forecast info "weekly_forecasts" along with more information about the requested geography ("city_name").
+    """
+    geocoder = Geocoder(country_code)
+    geo = geocoder.query_postal_code(zip_code)
+    # using a null-checking method from pandas because geo is a pandas Series:
+    if isnull(geo.latitude) or isnull(geo.longitude) or isnull(geo.place_name) or isnull(geo.state_code):
+        return None
+
+    # unfortunately the weather.gov api makes us do two requests or use a more sophisticated caching strategy (see api docs)
+    request_url = f"https://api.weather.gov/points/{geo.latitude},{geo.longitude}"
+    response = requests.get(request_url)
+    if response.status_code != 200:
+        return None
+    parsed_response = json.loads(response.text)
+
+    forecast_url = parsed_response["properties"]["forecast"]
+    forecast_response = requests.get(forecast_url)
+    if forecast_response.status_code != 200:
+        return None
+    parsed_forecast_response = json.loads(forecast_response.text)
+
+    # consider returning the raw geo and parsed_forecast_response objects,
+    # ... and using a different method to parse them further!
+    # ... but we're doing that here for now as well:
+    city_name = f"{geo.place_name}, {geo.state_code}" #> Washington, DC
+    weekly_forecasts = []
+    for period in parsed_forecast_response["properties"]["periods"]:
+        if period["isDaytime"] == True:
+            weekly_forecasts.append({
+                "timestamp": format_hour(period["startTime"]),
+                "temp": format_temp(period["temperature"], period["temperatureUnit"]),
+                "conditions": period["shortForecast"],
+                "image_url": period["icon"]
+    })
+        else:
+            continue
+    return {"city_name": city_name, "weekly_forecasts": weekly_forecasts}
+
+def getting_daily_high(country_code, zip_code):
+    """
+    Fetches the daily high from the Weather.gov API, for a given country and zip code.
+
+    Params:
+        country_code (str) the requested country, like "US"
+        zip_code (str) the requested postal code, like "20057"
+
+    Example:
+        result = get_daily_high(country_code="US", zip_code="20057")
+
+    Returns the forecast info "hourly_forecasts" along with more information about the requested geography ("city_name").
+    """
+    geocoder = Geocoder(country_code)
+    geo = geocoder.query_postal_code(zip_code)
+    # using a null-checking method from pandas because geo is a pandas Series:
+    if isnull(geo.latitude) or isnull(geo.longitude) or isnull(geo.place_name) or isnull(geo.state_code):
+        return None
+
+    # unfortunately the weather.gov api makes us do two requests or use a more sophisticated caching strategy (see api docs)
+    request_url = f"https://api.weather.gov/points/{geo.latitude},{geo.longitude}"
+    response = requests.get(request_url)
+    if response.status_code != 200:
+        return None
+    parsed_response = json.loads(response.text)
+
+    forecast_url = parsed_response["properties"]["forecast"]
+    forecast_response = requests.get(forecast_url)
+    if forecast_response.status_code != 200:
+        return None
+    parsed_forecast_response = json.loads(forecast_response.text)
+
+    # consider returning the raw geo and parsed_forecast_response objects,
+    # ... and using a different method to parse them further!
+    # ... but we're doing that here for now as well:
+    city_name = f"{geo.place_name}, {geo.state_code}" #> Washington, DC
+    for period in parsed_forecast_response["properties"]["periods"][0:2]:
+        if period["isDaytime"] == True:
+                daily_high= format_temp(period["temperature"], period["temperatureUnit"])
+        else:
+            continue
+    return {"city_name": city_name, "daily_high": daily_high}
 
 def format_temp(temp, temp_unit="F"):
     """
@@ -102,16 +194,36 @@ if __name__ == "__main__":
 
     # FETCH DATA
 
-    result = get_hourly_forecasts(country_code=user_country, zip_code=user_zip)
+    result= getting_daily_high(country_code=user_country, zip_code=user_zip)
     if not result:
         print("INVALID GEOGRAPHY. PLEASE CHECK YOUR INPUTS AND TRY AGAIN!")
         exit()
 
+    result1 = get_hourly_forecasts(country_code=user_country, zip_code=user_zip)
+    if not result1:
+        print("INVALID GEOGRAPHY. PLEASE CHECK YOUR INPUTS AND TRY AGAIN!")
+        exit()
+    
+    result2 = get_weekly_forecasts(country_code=user_country, zip_code=user_zip)
+    if not result2:
+        print("INVALID GEOGRAPHY. PLEASE CHECK YOUR INPUTS AND TRY AGAIN!")
+        exit()
+
     # DISPLAY OUTPUTS
+    print("-----------------")
+    print(f"TODAY'S WEATHER HIGH FOR {result['city_name'].upper()} is {result['daily_high']}")
+    print("-----------------")
 
     print("-----------------")
-    print(f"TODAY'S WEATHER FORECAST FOR {result['city_name'].upper()}...")
+    print(f"TODAY'S WEATHER FORECAST FOR {result1['city_name'].upper()}...")
     print("-----------------")
 
-    for forecast in result["hourly_forecasts"]:
+    for forecast in result1["hourly_forecasts"]:
+        print(forecast["timestamp"], "|", forecast["temp"], "|", forecast["conditions"])
+    
+    print("-----------------")
+    print(f"THIS WEEK'S WEATHER FORECAST FOR {result2['city_name'].upper()}...")
+    print("-----------------")
+
+    for forecast in result2["weekly_forecasts"]:
         print(forecast["timestamp"], "|", forecast["temp"], "|", forecast["conditions"])

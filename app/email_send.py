@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from datetime import date
 
 from app import APP_ENV
-from app.weather_email import get_hourly_forecasts, set_geography
+from app.weather_email import getting_daily_high, set_geography
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     # FETCH DATA
 
-    result = get_hourly_forecasts(country_code=user_country, zip_code=user_zip)
+    result = getting_daily_high(country_code=user_country, zip_code=user_zip)
     if not result:
         print("INVALID GEOGRAPHY. PLEASE CHECK YOUR INPUTS AND TRY AGAIN!")
         exit()
@@ -62,11 +62,10 @@ if __name__ == "__main__":
     html += "<h4>Today's Date</h4>"
     html += f"<p>{todays_date}</p>"
 
-    html += f"<h4>Weather Forecast for {result['city_name']}</h4>"
+    html += f"<p>The high in {result['city_name']} today will be {result['daily_high']}. </p>"
+    html += f"<p>The high in {result['city_name']} today will be {result['daily_high']}. </p>"
+    html += f"<p>The high in {result['city_name']} today will be {result['daily_high']}. </p>"
     html += "<ul>"
-    for forecast in result["hourly_forecasts"]:
-        html += f"<li>{forecast['timestamp']} | {forecast['temp']} | {forecast['conditions'].upper()}</li>"
-    html += "</ul>"
 
-    send_email(subject="[Daily Briefing] My Morning Report", html=html)
+    send_email(subject="[Daily Email] Today's Crucial Information", html=html)
     

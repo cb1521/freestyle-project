@@ -34,10 +34,12 @@
     -->
     {% set nav_links = [
         ('/stock/form', 'stock_form', 'Stock Form'),
-        ('/weather/form', 'weather_form', 'Weather Form')
+        ('/stock/trends/form', 'stock_trends_form', 'Stock Trends'),
+        ('/weather/form', 'weather_form', 'Weather Form'),
+        ('/weather/trends/form', 'weather_trends_form', 'Weather Trends')
       ] -%}
     {% set active_page = active_page|default('home') -%}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">The Simple App</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

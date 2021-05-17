@@ -11,7 +11,7 @@
     <!-- TODO: consider adding images using the provided icon urls -->
     <ul>
     {% for forecast in results["weekly_forecasts"] %}
-        <li>{{ forecast["timestamp"] }} | {{ forecast["temp"] }} | {{ forecast["conditions"].upper() }}</li>
+        <li>{{ forecast["day_of_week"] }} | {{ forecast["temp"] }} | {{ forecast["conditions"].upper() }}</li>
     {% endfor %}
     </ul>
 

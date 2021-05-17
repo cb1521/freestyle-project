@@ -1,0 +1,18 @@
+{% extends "bootstrap_layout.html" %}
+{% set active_page = "stock_trends" %}
+
+{% block content %}
+
+    <h2>Closing Price Fluctuations for Your Investment in {{ symbol }} Over the Last 20 Days of Trading</h2>
+
+    <p>Shares: {{ shares }}</p>
+
+    <!-- TODO: consider using a table instead of a list -->
+    <!-- TODO: consider adding images using the provided icon urls -->
+    <ul>
+    {% for day in results["investment_trends"] %}
+        <li>{{ day["date"] }} | {{ day["daily_investment_close"] }}</li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}

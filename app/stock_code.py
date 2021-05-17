@@ -89,10 +89,15 @@ def stock_growth(symbol, shares):
     previous_close= float(tsd[previous_day]["4. close"])
     current_investor_value= latest_close*int(shares)
     previous_investor_value= previous_close*int(shares)
-    change_in_value= to_usd(current_investor_value - previous_investor_value)
-    return{"change_in_value": change_in_value}
+    stock_data=[]
+    stock_data.append({
+        "current_investor_value": to_usd(current_investor_value),
+        "previous_investor_value": to_usd(previous_investor_value),
+        "change_in_value": to_usd(current_investor_value - previous_investor_value)
+    })
+    return{"stock_data": stock_data}
 
-def stock_trends(symbol, shares):
+def stock_time(symbol, shares):
     api_key= os.environ.get("ALPHAVANTAGE_API_KEY") #using the .env variable
     request_url= f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={api_key}" #getting the appropriate webpage
     #print(request_url)
@@ -131,7 +136,7 @@ if __name__ == "__main__":
         print("INVALID SYMBOL, PLEASE TRY AGAIN!")
         exit()
     
-    result2 = stock_trends(symbol= user_symbol, shares= user_shares)
+    result2 = stock_time(symbol= user_symbol, shares= user_shares)
     if not result2:
         print("INVALID SYMBOL, PLEASE TRY AGAIN!")
         exit()
@@ -142,7 +147,7 @@ if __name__ == "__main__":
     print("-----------------")
 
     print("-----------------")
-    print(f"YOUR INVESTMENT IN {user_symbol} STOCK HAS CHANGED BY {result1['change_in_value']}")
+    print(f"YOUR INVESTMENT IN {user_symbol} STOCK HAS CHANGED BY {result1['investment_trends']['change_in_value']}")
     print("-----------------")
     
     print("-----------------")

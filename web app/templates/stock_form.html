@@ -1,0 +1,23 @@
+{% extends "bootstrap_layout.html" %}
+{% set active_page = "stock_form" %}
+
+{% block content %}
+
+    <h2>Stock Form</h2>
+
+    <p>Request a breakdown of your investment in a company from the prior day!</p>
+
+    <form action="/stock/summary" method="POST">
+
+        <label>Stock Ticker:</label>
+        <input type="text" name="ticker_symbol" placeholder="MSFT" value="MSFT">
+        <br>
+
+        <label>Number of Shares:</label>
+        <input type="number" name="stock_shares" placeholder="4" value="4">
+        <br>
+
+        <button>Submit</button>
+    </form>
+
+{% endblock %}

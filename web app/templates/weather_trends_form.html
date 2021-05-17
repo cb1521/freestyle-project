@@ -1,0 +1,23 @@
+{% extends "bootstrap_layout.html" %}
+{% set active_page = "weather_trends_form" %}
+
+{% block content %}
+
+    <h2>Weather Trends Form</h2>
+
+    <p>Request a look at the weather over the next week in your town</p>
+
+    <form action="/weather/forecast" method="POST">
+
+        <label>Country Code:</label>
+        <input type="text" name="country_code" placeholder="US" value="US">
+        <br>
+
+        <label>Zip Code:</label>
+        <input type="text" name="zip_code" placeholder="20057" value="20057">
+        <br>
+
+        <button>Submit</button>
+    </form>
+
+{% endblock %}

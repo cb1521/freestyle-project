@@ -1,0 +1,19 @@
+{% extends "bootstrap_layout.html" %}
+{% set active_page = "stock_trends_form" %}
+
+{% block content %}
+
+    <h2>Stock Trends Form</h2>
+
+    <p>Request a look at how your stock has done over the past month</p>
+
+    <form action="/stock/trends" method="POST">
+
+        <label>Stock Ticker:</label>
+        <input type="text" name="ticker_symbol" placeholder="MSFT" value="MSFT">
+        <br>
+
+        <button>Submit</button>
+    </form>
+
+{% endblock %}
